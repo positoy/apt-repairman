@@ -5,12 +5,14 @@ import { useEffect, useRef, useState } from "react";
 const MAP_ELEMENT_ID = "naver-map";
 const NAVER_MAP_SCRIPT_ID = "naver-map-sdk";
 
-export function NaverMapView() {
+type NaverMapViewProps = {
+  ncpKeyId?: string;
+};
+
+export function NaverMapView({ ncpKeyId }: NaverMapViewProps) {
   const mapRef = useRef<naver.maps.Map | null>(null);
   const [isSdkLoaded, setIsSdkLoaded] = useState(false);
   const [authFailed, setAuthFailed] = useState(false);
-
-  const naverMapClientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
   useEffect(() => {
     window.navermap_authFailure = () => {
@@ -23,7 +25,7 @@ export function NaverMapView() {
   }, []);
 
   useEffect(() => {
-    if (!naverMapClientId) return;
+    if (!ncpKeyId) return;
 
     if (window.naver?.maps) {
       queueMicrotask(() => setIsSdkLoaded(true));
@@ -38,12 +40,12 @@ export function NaverMapView() {
 
     const script = document.createElement("script");
     script.id = NAVER_MAP_SCRIPT_ID;
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${naverMapClientId}`;
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${ncpKeyId}`;
     script.async = true;
     script.onload = () => setIsSdkLoaded(true);
     script.onerror = () => setAuthFailed(true);
     document.head.appendChild(script);
-  }, [naverMapClientId]);
+  }, [ncpKeyId]);
 
   useEffect(() => {
     if (!isSdkLoaded || !window.naver?.maps || mapRef.current) return;
@@ -58,12 +60,12 @@ export function NaverMapView() {
     <main className="h-dvh w-screen overflow-hidden bg-slate-100">
       <div id={MAP_ELEMENT_ID} className="h-full w-full" />
 
-      {!naverMapClientId ? (
+      {!ncpKeyId ? (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-100 p-6">
           <div className="rounded-2xl bg-white p-6 text-center shadow-xl ring-1 ring-slate-200">
             <p className="text-sm font-semibold text-slate-500">Naver Maps API key required</p>
             <p className="mt-2 text-sm text-slate-700">
-              <code>NEXT_PUBLIC_NAVER_MAP_CLIENT_ID</code>를 <code>.env.local</code>에 넣어주세요.
+              <code>NAVER_CLOUD_MAPS_API_KEY_ID</code>를 <code>.env.local</code>에 넣어주세요.
             </p>
           </div>
         </div>
