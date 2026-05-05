@@ -21,6 +21,7 @@ export function NaverMapView({ ncpKeyId }: NaverMapViewProps) {
   const markerRef = useRef<naver.maps.Marker | null>(null);
   const [isSdkLoaded, setIsSdkLoaded] = useState(false);
   const [authFailed, setAuthFailed] = useState(false);
+  const [isMaterialOverlayOpen, setIsMaterialOverlayOpen] = useState(false);
 
   useEffect(() => {
     window.navermap_authFailure = () => {
@@ -75,6 +76,11 @@ export function NaverMapView({ ncpKeyId }: NaverMapViewProps) {
       },
     });
 
+    maps.Event.addListener(marker, "click", () => {
+      setIsMaterialOverlayOpen(true);
+      map.panTo(position);
+    });
+
     marker.setMap(map);
     mapRef.current = map;
     markerRef.current = marker;
@@ -83,7 +89,7 @@ export function NaverMapView({ ncpKeyId }: NaverMapViewProps) {
   return (
     <main className="h-dvh w-screen overflow-hidden bg-slate-100">
       <div id={MAP_ELEMENT_ID} className="h-full w-full" />
-      <MaterialOverlay />
+      <MaterialOverlay open={isMaterialOverlayOpen} onClose={() => setIsMaterialOverlayOpen(false)} />
 
       {!ncpKeyId ? (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-100 p-6">

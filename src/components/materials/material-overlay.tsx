@@ -3,6 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Material, MaterialDatabase, MaterialRoom } from "@/mocks/materials";
 
+type MaterialOverlayProps = {
+  open: boolean;
+  onClose: () => void;
+};
+
 function formatPrice(material: Material) {
   if (typeof material.price === "number") return `${material.price.toLocaleString("ko-KR")}원`;
   if (typeof material.price_min === "number" && typeof material.price_max === "number") {
@@ -20,7 +25,7 @@ function countMaterials(rooms: MaterialRoom[]) {
   return rooms.reduce((sum, room) => sum + room.materials.length, 0);
 }
 
-export function MaterialOverlay() {
+export function MaterialOverlay({ open, onClose }: MaterialOverlayProps) {
   const [data, setData] = useState<MaterialDatabase | null>(null);
   const [selectedRoomName, setSelectedRoomName] = useState<string | null>(null);
   const [selectedPyeong, setSelectedPyeong] = useState("33평");
@@ -50,12 +55,28 @@ export function MaterialOverlay() {
   }, [data, selectedRoomName]);
 
   return (
-    <aside className="absolute bottom-0 left-0 top-0 z-10 w-full max-w-[430px] p-3 sm:p-4">
-      <div className="flex h-full flex-col overflow-hidden rounded-[28px] bg-white/95 shadow-2xl ring-1 ring-slate-200/80 backdrop-blur-xl">
+    <aside
+      className={`absolute inset-x-0 bottom-0 z-10 h-[86dvh] transition-transform duration-300 sm:inset-y-0 sm:left-0 sm:right-auto sm:h-auto sm:w-full sm:max-w-[430px] sm:p-4 ${
+        open ? "translate-y-0" : "translate-y-[calc(100%+16px)] sm:translate-y-0"
+      }`}
+    >
+      <div className="flex h-full flex-col overflow-hidden rounded-t-[28px] bg-white/95 shadow-2xl ring-1 ring-slate-200/80 backdrop-blur-xl sm:rounded-[28px]">
         <header className="border-b border-slate-100 p-5">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-600">Apt Repairman</p>
-          <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-950">더파크비스타데시앙아파트</h1>
-          <p className="mt-1 text-sm text-slate-500">84㎡ 리모델링 자재 샘플 DB</p>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-600">Apt Repairman</p>
+              <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-950">더파크비스타데시앙아파트</h1>
+              <p className="mt-1 text-sm text-slate-500">84㎡ 리모델링 자재 샘플 DB</p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="자재 정보 닫기"
+              className="rounded-full bg-slate-100 px-3 py-2 text-lg font-black leading-none text-slate-600 transition hover:bg-slate-200 sm:hidden"
+            >
+              ×
+            </button>
+          </div>
 
           {data ? (
             <div className="mt-4 grid grid-cols-3 gap-2 text-center">
