@@ -23,6 +23,7 @@ function countMaterials(rooms: MaterialRoom[]) {
 export function MaterialOverlay() {
   const [data, setData] = useState<MaterialDatabase | null>(null);
   const [selectedRoomName, setSelectedRoomName] = useState<string | null>(null);
+  const [selectedPyeong, setSelectedPyeong] = useState("33평");
 
   useEffect(() => {
     let ignore = false;
@@ -67,8 +68,8 @@ export function MaterialOverlay() {
                 <p className="text-xs font-semibold text-slate-500">자재</p>
               </div>
               <div className="rounded-2xl bg-emerald-50 p-3">
-                <p className="text-lg font-black text-emerald-700">{data.currency}</p>
-                <p className="text-xs font-semibold text-emerald-700/70">통화</p>
+                <p className="text-lg font-black text-emerald-700">{selectedPyeong}</p>
+                <p className="text-xs font-semibold text-emerald-700/70">선택 평형</p>
               </div>
             </div>
           ) : null}
@@ -76,31 +77,46 @@ export function MaterialOverlay() {
 
         {data && selectedRoom ? (
           <>
-            <nav className="flex gap-2 overflow-x-auto border-b border-slate-100 px-4 py-3">
-              {data.rooms.map((room) => (
-                <button
-                  key={room.name}
-                  onClick={() => setSelectedRoomName(room.name)}
-                  className={`shrink-0 rounded-full px-3 py-2 text-sm font-bold transition ${
-                    selectedRoom.name === room.name
-                      ? "bg-slate-950 text-white shadow-sm"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  {room.name}
-                </button>
-              ))}
-            </nav>
+            <div className="border-b border-slate-100 px-4 py-3">
+              <div className="grid grid-cols-3 gap-2 rounded-2xl bg-slate-100 p-1">
+                {["23평", "33평", "44평"].map((pyeong) => (
+                  <button
+                    key={pyeong}
+                    onClick={() => setSelectedPyeong(pyeong)}
+                    className={`rounded-xl px-3 py-2 text-sm font-black transition ${
+                      selectedPyeong === pyeong
+                        ? "bg-slate-950 text-white shadow-sm"
+                        : "text-slate-500 hover:bg-white/70 hover:text-slate-900"
+                    }`}
+                  >
+                    {pyeong}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-              <div className="mb-3 flex items-end justify-between">
-                <div>
-                  <p className="text-xs font-bold text-slate-400">선택 공간</p>
+              <div className="mb-4 space-y-3">
+                <label className="block">
+                  <span className="text-xs font-bold text-slate-400">공간 선택</span>
+                  <select
+                    value={selectedRoom.name}
+                    onChange={(event) => setSelectedRoomName(event.target.value)}
+                    className="mt-1 w-full appearance-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-lg font-black text-slate-950 shadow-sm outline-none transition focus:border-slate-950 focus:ring-4 focus:ring-slate-200"
+                  >
+                    {data.rooms.map((room) => (
+                      <option key={room.name} value={room.name}>
+                        {room.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <div className="flex items-center justify-between">
                   <h2 className="text-xl font-black text-slate-950">{selectedRoom.name}</h2>
+                  <p className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
+                    {selectedRoom.materials.length}개 후보
+                  </p>
                 </div>
-                <p className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
-                  {selectedRoom.materials.length}개 후보
-                </p>
               </div>
 
               <div className="space-y-3">
