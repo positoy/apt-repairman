@@ -3,7 +3,7 @@ export {};
 declare global {
   const naver: {
     maps: {
-      Map: new (element: HTMLElement, options: NaverMapOptions) => NaverMap;
+      Map: new (element: HTMLElement | string, options: NaverMapOptions) => NaverMap;
       Marker: new (options: NaverMarkerOptions) => NaverMarker;
       LatLng: new (lat: number, lng: number) => NaverLatLng;
       Point: new (x: number, y: number) => NaverPoint;
@@ -18,6 +18,7 @@ declare global {
 
   interface Window {
     naver?: typeof naver;
+    navermap_authFailure?: () => void;
   }
 
   namespace naver.maps {
