@@ -1,5 +1,6 @@
 "use client";
 
+import { MaterialOverlay } from "@/components/materials/material-overlay";
 import { useEffect, useRef, useState } from "react";
 
 const MAP_ELEMENT_ID = "naver-map";
@@ -82,6 +83,7 @@ export function NaverMapView({ ncpKeyId }: NaverMapViewProps) {
   return (
     <main className="h-dvh w-screen overflow-hidden bg-slate-100">
       <div id={MAP_ELEMENT_ID} className="h-full w-full" />
+      <MaterialOverlay />
 
       {!ncpKeyId ? (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-100 p-6">
