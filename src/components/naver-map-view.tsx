@@ -5,12 +5,19 @@ import { useEffect, useRef, useState } from "react";
 const MAP_ELEMENT_ID = "naver-map";
 const NAVER_MAP_SCRIPT_ID = "naver-map-sdk";
 
+const FOCUS_APARTMENT = {
+  name: "더파크비스타데시앙아파트",
+  lat: 37.4030798,
+  lng: 127.2468939,
+};
+
 type NaverMapViewProps = {
   ncpKeyId?: string;
 };
 
 export function NaverMapView({ ncpKeyId }: NaverMapViewProps) {
   const mapRef = useRef<naver.maps.Map | null>(null);
+  const markerRef = useRef<naver.maps.Marker | null>(null);
   const [isSdkLoaded, setIsSdkLoaded] = useState(false);
   const [authFailed, setAuthFailed] = useState(false);
 
@@ -50,10 +57,26 @@ export function NaverMapView({ ncpKeyId }: NaverMapViewProps) {
   useEffect(() => {
     if (!isSdkLoaded || !window.naver?.maps || mapRef.current) return;
 
-    mapRef.current = new window.naver.maps.Map(MAP_ELEMENT_ID, {
-      center: new window.naver.maps.LatLng(37.5666103, 126.9783882),
-      zoom: 13,
+    const maps = window.naver.maps;
+    const position = new maps.LatLng(FOCUS_APARTMENT.lat, FOCUS_APARTMENT.lng);
+
+    const map = new maps.Map(MAP_ELEMENT_ID, {
+      center: position,
+      zoom: 16,
     });
+
+    const marker = new maps.Marker({
+      position,
+      title: FOCUS_APARTMENT.name,
+      icon: {
+        content: `<div style="display:flex;align-items:center;gap:8px;border-radius:999px;background:#111827;color:white;padding:9px 13px;font-size:14px;font-weight:800;box-shadow:0 12px 28px rgba(15,23,42,.28);white-space:nowrap;"><span style="width:8px;height:8px;border-radius:999px;background:#34d399;"></span>${FOCUS_APARTMENT.name}</div>`,
+        anchor: new maps.Point(92, 42),
+      },
+    });
+
+    marker.setMap(map);
+    mapRef.current = map;
+    markerRef.current = marker;
   }, [isSdkLoaded]);
 
   return (
