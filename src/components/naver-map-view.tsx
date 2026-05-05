@@ -1,9 +1,9 @@
 "use client";
 
-import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 
 const MAP_ELEMENT_ID = "naver-map";
+const NAVER_MAP_SCRIPT_ID = "naver-map-sdk";
 
 export function NaverMapView() {
   const mapRef = useRef<naver.maps.Map | null>(null);
@@ -23,6 +23,29 @@ export function NaverMapView() {
   }, []);
 
   useEffect(() => {
+    if (!naverMapClientId) return;
+
+    if (window.naver?.maps) {
+      queueMicrotask(() => setIsSdkLoaded(true));
+      return;
+    }
+
+    const existingScript = document.getElementById(NAVER_MAP_SCRIPT_ID) as HTMLScriptElement | null;
+    if (existingScript) {
+      existingScript.addEventListener("load", () => setIsSdkLoaded(true), { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = NAVER_MAP_SCRIPT_ID;
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${naverMapClientId}`;
+    script.async = true;
+    script.onload = () => setIsSdkLoaded(true);
+    script.onerror = () => setAuthFailed(true);
+    document.head.appendChild(script);
+  }, [naverMapClientId]);
+
+  useEffect(() => {
     if (!isSdkLoaded || !window.naver?.maps || mapRef.current) return;
 
     mapRef.current = new window.naver.maps.Map(MAP_ELEMENT_ID, {
@@ -33,15 +56,6 @@ export function NaverMapView() {
 
   return (
     <main className="h-dvh w-screen overflow-hidden bg-slate-100">
-      {naverMapClientId ? (
-        <Script
-          src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${naverMapClientId}`}
-          strategy="afterInteractive"
-          onReady={() => setIsSdkLoaded(true)}
-          onLoad={() => setIsSdkLoaded(true)}
-        />
-      ) : null}
-
       <div id={MAP_ELEMENT_ID} className="h-full w-full" />
 
       {!naverMapClientId ? (
@@ -57,7 +71,7 @@ export function NaverMapView() {
 
       {authFailed ? (
         <div className="absolute left-4 top-4 rounded-xl bg-red-600 px-4 py-3 text-sm font-semibold text-white shadow-lg">
-          네이버지도 인증에 실패했습니다. ncpKeyId와 서비스 도메인 설정을 확인해주세요.
+          네이버지도 로드/인증에 실패했습니다. ncpKeyId와 서비스 도메인 설정을 확인해주세요.
         </div>
       ) : null}
     </main>
