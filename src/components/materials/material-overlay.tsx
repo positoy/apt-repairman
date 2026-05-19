@@ -6,6 +6,8 @@ import type { Material, MaterialDatabase, MaterialRoom } from "@/mocks/materials
 type MaterialOverlayProps = {
   open: boolean;
   onClose: () => void;
+  apartmentName?: string;
+  apartmentSummary?: string;
 };
 
 function formatPrice(material: Material) {
@@ -25,7 +27,7 @@ function countMaterials(rooms: MaterialRoom[]) {
   return rooms.reduce((sum, room) => sum + room.materials.length, 0);
 }
 
-export function MaterialOverlay({ open, onClose }: MaterialOverlayProps) {
+export function MaterialOverlay({ open, onClose, apartmentName = "파크뷰비스타데시앙", apartmentSummary = "84C 자재 DB" }: MaterialOverlayProps) {
   const [data, setData] = useState<MaterialDatabase | null>(null);
   const [selectedRoomName, setSelectedRoomName] = useState<string | null>(null);
   const [selectedPyeong, setSelectedPyeong] = useState("33평");
@@ -65,8 +67,8 @@ export function MaterialOverlay({ open, onClose }: MaterialOverlayProps) {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-600">Apt Repairman</p>
-              <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-950">더파크비스타데시앙아파트</h1>
-              <p className="mt-1 text-sm text-slate-500">84㎡ 리모델링 자재 샘플 DB</p>
+              <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-950">{apartmentName}</h1>
+              <p className="mt-1 text-sm text-slate-500">{apartmentSummary}</p>
             </div>
             <button
               type="button"

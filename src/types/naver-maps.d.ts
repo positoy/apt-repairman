@@ -10,6 +10,7 @@ declare global {
       Event: {
         addListener: (target: unknown, eventName: string, listener: () => void) => void;
       };
+      Size: new (width: number, height: number) => NaverSize;
       Position: {
         BOTTOM_LEFT: number;
       };
@@ -29,6 +30,7 @@ declare global {
 
 type NaverLatLng = unknown;
 type NaverPoint = unknown;
+type NaverSize = unknown;
 
 type NaverMap = {
   panTo: (latLng: NaverLatLng) => void;
@@ -55,5 +57,6 @@ type NaverMarkerOptions = {
   icon?: {
     content: string;
     anchor: NaverPoint;
+    size?: NaverSize;
   };
 };
