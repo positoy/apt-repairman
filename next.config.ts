@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: [
+    "macmini",
+    "macmini.local",
+    "localhost",
+    "127.0.0.1",
     "macmini:3001",
     "localhost:3001",
     "127.0.0.1:3001",

@@ -152,16 +152,7 @@ export function NaverMapView({ ncpKeyId }: NaverMapViewProps) {
   return (
     <main className="h-dvh w-screen overflow-hidden bg-slate-100">
       <div id={MAP_ELEMENT_ID} className="h-full w-full" />
-      <MaterialOverlay
-        open={isMaterialOverlayOpen}
-        onClose={() => setSelectedApartment(null)}
-        apartmentName={selectedApartment?.name}
-        apartmentSummary={
-          selectedApartment
-            ? `${selectedApartment.unitTypes.join(" · ") || "평형 미등록"} · 자재 ${selectedApartment.materialCount.toLocaleString("ko-KR")}개`
-            : undefined
-        }
-      />
+      <MaterialOverlay open={isMaterialOverlayOpen} onClose={() => setSelectedApartment(null)} apartment={selectedApartment} />
 
       {!ncpKeyId ? (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-100 p-6">

@@ -12,6 +12,7 @@ TABLES = [
     "apartments",
     "unit_types",
     "source_documents",
+    "source_files",
     "image_blobs",
     "spaces",
     "material_categories",
@@ -21,6 +22,7 @@ TABLES = [
 
 WHERE = {
     "materials": "WHERE deleted = 0",
+    "source_files": "WHERE deleted = 0",
     "media_refs": "WHERE deleted = 0",
 }
 
@@ -54,7 +56,7 @@ def main():
         rows = con.execute(f"SELECT {', '.join(cols)} FROM {table} {where} ORDER BY id").fetchall()
         if not rows:
             continue
-        if table == "image_blobs":
+        if table in {"image_blobs", "source_files"}:
             # One row per statement keeps max_allowed_packet risk low and makes failures easier to isolate.
             for row in rows:
                 vals = ", ".join(q(row[c]) for c in cols)
@@ -73,6 +75,7 @@ def main():
         "ALTER TABLE apartments AUTO_INCREMENT = 100000;",
         "ALTER TABLE unit_types AUTO_INCREMENT = 100000;",
         "ALTER TABLE source_documents AUTO_INCREMENT = 100000;",
+        "ALTER TABLE source_files AUTO_INCREMENT = 100000;",
         "ALTER TABLE image_blobs AUTO_INCREMENT = 100000;",
         "ALTER TABLE spaces AUTO_INCREMENT = 100000;",
         "ALTER TABLE material_categories AUTO_INCREMENT = 100000;",

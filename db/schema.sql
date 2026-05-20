@@ -52,6 +52,38 @@ CREATE TABLE IF NOT EXISTS source_documents (
   FOREIGN KEY (unit_type_id) REFERENCES unit_types(id) ON DELETE RESTRICT
 );
 
+-- Original source files for a source document.
+-- Keep full-page images, PDFs, or external source URLs here.
+-- Cropped/reference images for individual materials stay in image_blobs + media_refs.
+CREATE TABLE IF NOT EXISTS source_files (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  source_document_id INTEGER NOT NULL,
+  apartment_id INTEGER NOT NULL,
+  unit_type_id INTEGER,
+  type TEXT NOT NULL CHECK (type IN ('image', 'pdf', 'url')),
+  source_type TEXT NOT NULL CHECK (source_type IN ('blob', 'url')),
+  source TEXT,
+  mime_type TEXT,
+  filename TEXT,
+  data BLOB,
+  width INTEGER,
+  height INTEGER,
+  size_bytes INTEGER,
+  sha256 TEXT,
+  caption TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  deleted INTEGER NOT NULL DEFAULT 0 CHECK (deleted IN (0, 1)),
+  FOREIGN KEY (source_document_id) REFERENCES source_documents(id) ON DELETE RESTRICT,
+  FOREIGN KEY (apartment_id) REFERENCES apartments(id) ON DELETE RESTRICT,
+  FOREIGN KEY (unit_type_id) REFERENCES unit_types(id) ON DELETE RESTRICT,
+  CHECK (
+    (type IN ('image', 'pdf') AND source_type = 'blob' AND data IS NOT NULL)
+    OR (type = 'url' AND source_type = 'url' AND source IS NOT NULL)
+    OR (type = 'pdf' AND source_type = 'url' AND source IS NOT NULL)
+  )
+);
+
 CREATE TABLE IF NOT EXISTS image_blobs (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   mime_type TEXT NOT NULL,
@@ -168,6 +200,9 @@ END;
 CREATE INDEX IF NOT EXISTS idx_apartments_location ON apartments (sido, sigungu, eupmyeondong, name) WHERE deleted = 0;
 CREATE INDEX IF NOT EXISTS idx_unit_types_apartment_name ON unit_types (apartment_id, name) WHERE deleted = 0;
 CREATE INDEX IF NOT EXISTS idx_source_documents_apartment_unit ON source_documents (apartment_id, unit_type_id) WHERE deleted = 0;
+CREATE INDEX IF NOT EXISTS idx_source_files_document ON source_files (source_document_id) WHERE deleted = 0;
+CREATE INDEX IF NOT EXISTS idx_source_files_apartment ON source_files (apartment_id, unit_type_id) WHERE deleted = 0;
+CREATE INDEX IF NOT EXISTS idx_source_files_sha256 ON source_files (sha256) WHERE sha256 IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_spaces_apartment_unit_name ON spaces (apartment_id, unit_type_id, name) WHERE deleted = 0;
 CREATE INDEX IF NOT EXISTS idx_categories_parent_sort ON material_categories (parent_id, sort_order) WHERE deleted = 0;
 CREATE INDEX IF NOT EXISTS idx_materials_apartment_unit ON materials (apartment_id, unit_type_id) WHERE deleted = 0;

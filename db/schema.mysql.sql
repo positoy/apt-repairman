@@ -47,6 +47,38 @@ CREATE TABLE IF NOT EXISTS source_documents (
   CONSTRAINT fk_source_documents_unit_type FOREIGN KEY (unit_type_id) REFERENCES unit_types(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE IF NOT EXISTS source_files (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  source_document_id BIGINT UNSIGNED NOT NULL,
+  apartment_id BIGINT UNSIGNED NOT NULL,
+  unit_type_id BIGINT UNSIGNED NULL,
+  type ENUM('image', 'pdf', 'url') NOT NULL,
+  source_type ENUM('blob', 'url') NOT NULL,
+  source TEXT NULL,
+  mime_type VARCHAR(100) NULL,
+  filename TEXT NULL,
+  data LONGBLOB NULL,
+  width INT NULL,
+  height INT NULL,
+  size_bytes BIGINT NULL,
+  sha256 CHAR(64) NULL,
+  caption TEXT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted TINYINT(1) NOT NULL DEFAULT 0,
+  KEY idx_source_files_document (source_document_id, deleted),
+  KEY idx_source_files_apartment (apartment_id, unit_type_id, deleted),
+  KEY idx_source_files_sha256 (sha256, deleted),
+  CONSTRAINT fk_source_files_document FOREIGN KEY (source_document_id) REFERENCES source_documents(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_source_files_apartment FOREIGN KEY (apartment_id) REFERENCES apartments(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_source_files_unit_type FOREIGN KEY (unit_type_id) REFERENCES unit_types(id) ON DELETE RESTRICT,
+  CONSTRAINT chk_source_files_payload CHECK (
+    (type IN ('image', 'pdf') AND source_type = 'blob' AND data IS NOT NULL)
+    OR (type = 'url' AND source_type = 'url' AND source IS NOT NULL)
+    OR (type = 'pdf' AND source_type = 'url' AND source IS NOT NULL)
+  )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE IF NOT EXISTS image_blobs (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   mime_type VARCHAR(100) NOT NULL,
