@@ -32,6 +32,7 @@ erDiagram
     TEXT address
     POINT location
     DATETIME created_at
+    DATETIME modified_at
     TINYINT deleted
   }
 
@@ -44,6 +45,7 @@ erDiagram
     DOUBLE exclusive_area_m2
     TEXT description
     DATETIME created_at
+    DATETIME modified_at
     TINYINT deleted
   }
 
@@ -56,6 +58,7 @@ erDiagram
     TEXT original_filename
     TEXT source_label
     DATETIME imported_at
+    DATETIME modified_at
     TEXT notes
     TINYINT deleted
   }
@@ -78,6 +81,7 @@ erDiagram
     TEXT caption
     INT sort_order
     DATETIME created_at
+    DATETIME modified_at
     TINYINT deleted
   }
 
@@ -91,6 +95,8 @@ erDiagram
     BIGINT size_bytes
     CHAR sha256 UK
     DATETIME created_at
+    DATETIME modified_at
+    TINYINT deleted
   }
 
   spaces {
@@ -99,6 +105,7 @@ erDiagram
     BIGINT unit_type_id FK
     VARCHAR name
     INT sort_order
+    DATETIME modified_at
     TINYINT deleted
   }
 
@@ -107,6 +114,7 @@ erDiagram
     VARCHAR name
     BIGINT parent_id FK
     INT sort_order
+    DATETIME modified_at
     TINYINT deleted
   }
 
@@ -133,6 +141,7 @@ erDiagram
     DOUBLE confidence
     VARCHAR version_group_id
     DATETIME created_at
+    DATETIME modified_at
     TINYINT deleted
   }
 
@@ -147,5 +156,6 @@ erDiagram
     TEXT caption
     INT sort_order
     DATETIME created_at
+    DATETIME modified_at
     TINYINT deleted
   }

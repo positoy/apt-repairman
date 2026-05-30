@@ -1,4 +1,4 @@
-import { getAdminData, type AdminMaterial } from "@/lib/admin-sqlite";
+import { getAdminData, type AdminMaterial } from "@/lib/admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,7 +41,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
               <p className="text-xs font-black uppercase tracking-[0.28em] text-emerald-300">Apt Repairman Admin</p>
               <h1 className="mt-3 text-3xl font-black tracking-tight text-white lg:text-5xl">단지 → 방 → 자재 DB 조회</h1>
               <p className="mt-3 max-w-4xl text-sm leading-6 text-slate-300">
-                현재 SQLite DB를 직접 조회합니다. 핵심 관계는 <b>apartments(단지)</b> → <b>unit_types(평형)</b> → <b>spaces(방/공간)</b> → <b>materials(자재)</b>이며,
+                현재 MySQL DB를 직접 조회합니다. 핵심 관계는 <b>apartments(단지)</b> → <b>unit_types(평형)</b> → <b>spaces(방/공간)</b> → <b>materials(자재)</b>이며,
                 자재는 카테고리·원본문서·이미지 참조와 연결됩니다.
               </p>
               <p className="mt-2 break-all text-xs text-slate-500">DB: {data.dbPath}</p>
