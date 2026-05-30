@@ -1,0 +1,152 @@
+erDiagram
+  apartments ||--o{ unit_types : has
+  apartments ||--o{ source_documents : has
+  apartments ||--o{ source_files : has
+  apartments ||--o{ spaces : has
+  apartments ||--o{ materials : has
+
+  unit_types ||--o{ source_documents : has
+  unit_types ||--o{ source_files : has_optional
+  unit_types ||--o{ spaces : has
+  unit_types ||--o{ materials : has
+
+  source_documents ||--o{ source_files : has
+  source_documents ||--o{ materials : references_optional
+
+  spaces ||--o{ materials : contains_optional
+  material_categories ||--o{ materials : categorizes_optional
+  material_categories ||--o{ material_categories : parent_of
+
+  image_blobs ||..o{ media_refs : referenced_by_source_when_blob
+  apartments ||..o{ media_refs : polymorphic_owner
+  unit_types ||..o{ media_refs : polymorphic_owner
+  source_documents ||..o{ media_refs : polymorphic_owner
+  materials ||..o{ media_refs : polymorphic_owner
+
+  apartments {
+    BIGINT id PK
+    VARCHAR sido
+    VARCHAR sigungu
+    VARCHAR eupmyeondong
+    VARCHAR name
+    TEXT address
+    DOUBLE latitude
+    DOUBLE longitude
+    DATETIME created_at
+    TINYINT deleted
+  }
+
+  unit_types {
+    BIGINT id PK
+    BIGINT apartment_id FK
+    VARCHAR name
+    DOUBLE area_m2
+    DOUBLE supply_area_m2
+    DOUBLE exclusive_area_m2
+    TEXT description
+    DATETIME created_at
+    TINYINT deleted
+  }
+
+  source_documents {
+    BIGINT id PK
+    BIGINT apartment_id FK
+    BIGINT unit_type_id FK
+    VARCHAR title
+    ENUM document_type
+    TEXT original_filename
+    TEXT source_label
+    DATETIME imported_at
+    TEXT notes
+    TINYINT deleted
+  }
+
+  source_files {
+    BIGINT id PK
+    BIGINT source_document_id FK
+    BIGINT apartment_id FK
+    BIGINT unit_type_id FK
+    ENUM type
+    ENUM source_type
+    TEXT source
+    VARCHAR mime_type
+    TEXT filename
+    LONGBLOB data
+    INT width
+    INT height
+    BIGINT size_bytes
+    CHAR sha256
+    TEXT caption
+    INT sort_order
+    DATETIME created_at
+    TINYINT deleted
+  }
+
+  image_blobs {
+    BIGINT id PK
+    VARCHAR mime_type
+    TEXT filename
+    LONGBLOB data
+    INT width
+    INT height
+    BIGINT size_bytes
+    CHAR sha256 UK
+    DATETIME created_at
+  }
+
+  spaces {
+    BIGINT id PK
+    BIGINT apartment_id FK
+    BIGINT unit_type_id FK
+    VARCHAR name
+    INT sort_order
+    TINYINT deleted
+  }
+
+  material_categories {
+    BIGINT id PK
+    VARCHAR name
+    BIGINT parent_id FK
+    INT sort_order
+    TINYINT deleted
+  }
+
+  materials {
+    BIGINT id PK
+    BIGINT apartment_id FK
+    BIGINT unit_type_id FK
+    BIGINT space_id FK
+    BIGINT category_id FK
+    BIGINT source_document_id FK
+    TEXT room_name
+    TEXT location
+    TEXT item_name
+    TEXT manufacturer
+    TEXT brand
+    TEXT model_name
+    TEXT product_code
+    TEXT color
+    TEXT size
+    TEXT specification
+    TEXT finish
+    TEXT notes
+    TEXT raw_text
+    DOUBLE confidence
+    VARCHAR version_group_id
+    DATETIME created_at
+    TINYINT deleted
+  }
+
+  media_refs {
+    BIGINT id PK
+    ENUM owner_type
+    BIGINT owner_id
+    ENUM media_type
+    ENUM source_type
+    TEXT source
+    ENUM role
+    TEXT caption
+    INT sort_order
+    DATETIME created_at
+    TINYINT deleted
+  }
