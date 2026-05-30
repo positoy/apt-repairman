@@ -8,12 +8,12 @@ CREATE TABLE IF NOT EXISTS apartments (
   eupmyeondong VARCHAR(100) NULL,
   name VARCHAR(255) NOT NULL,
   address TEXT NULL,
-  latitude DOUBLE NULL,
-  longitude DOUBLE NULL,
+  location POINT SRID 4326 NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   deleted TINYINT(1) NOT NULL DEFAULT 0,
   UNIQUE KEY uq_apartments_location_name (sido, sigungu, name),
-  KEY idx_apartments_location (sido, sigungu, eupmyeondong, name, deleted)
+  KEY idx_apartments_location_name (sido, sigungu, eupmyeondong, name, deleted),
+  SPATIAL INDEX idx_apartments_location (location)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE IF NOT EXISTS unit_types (
