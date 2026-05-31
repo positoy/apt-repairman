@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS apartments (
 좌표 조회 예:
 
 ```sql
-SELECT ST_Y(location) AS latitude, ST_X(location) AS longitude
+SELECT ST_Latitude(location) AS latitude, ST_Longitude(location) AS longitude
 FROM apartments;
 ```
 
@@ -497,8 +497,8 @@ SELECT
   id,
   name,
   address,
-  ST_Y(location) AS latitude,
-  ST_X(location) AS longitude
+  ST_Latitude(location) AS latitude,
+  ST_Longitude(location) AS longitude
 FROM apartments
 WHERE deleted = 0
   AND location IS NOT NULL

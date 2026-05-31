@@ -139,8 +139,8 @@ export async function listApartmentPins(): Promise<ApartmentPin[]> {
       a.id,
       a.name,
       a.address,
-      ST_Y(a.location) AS latitude,
-      ST_X(a.location) AS longitude,
+      ST_Latitude(a.location) AS latitude,
+      ST_Longitude(a.location) AS longitude,
       GROUP_CONCAT(DISTINCT u.name ORDER BY u.name SEPARATOR ',') AS unit_types,
       COUNT(DISTINCT m.id) AS material_count
     FROM apartments a
@@ -152,7 +152,7 @@ export async function listApartmentPins(): Promise<ApartmentPin[]> {
       AND m.deleted = 0
     WHERE a.deleted = 0
       AND a.location IS NOT NULL
-    GROUP BY a.id, a.name, a.address, ST_Y(a.location), ST_X(a.location)
+    GROUP BY a.id, a.name, a.address, ST_Latitude(a.location), ST_Longitude(a.location)
     ORDER BY a.name
   `);
 
@@ -171,8 +171,8 @@ export async function getApartmentDetail(id: number): Promise<ApartmentDetail | 
         a.eupmyeondong,
         a.name,
         a.address,
-        ST_Y(a.location) AS latitude,
-        ST_X(a.location) AS longitude,
+        ST_Latitude(a.location) AS latitude,
+        ST_Longitude(a.location) AS longitude,
         GROUP_CONCAT(DISTINCT u.name ORDER BY u.name SEPARATOR ',') AS unit_types,
         COUNT(DISTINCT m.id) AS material_count
       FROM apartments a
@@ -184,7 +184,7 @@ export async function getApartmentDetail(id: number): Promise<ApartmentDetail | 
         AND m.deleted = 0
       WHERE a.deleted = 0
         AND a.id = ?
-      GROUP BY a.id, a.sido, a.sigungu, a.eupmyeondong, a.name, a.address, ST_Y(a.location), ST_X(a.location)
+      GROUP BY a.id, a.sido, a.sigungu, a.eupmyeondong, a.name, a.address, ST_Latitude(a.location), ST_Longitude(a.location)
       LIMIT 1
     `,
     [id],
